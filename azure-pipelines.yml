@@ -22,8 +22,8 @@ steps:
     command: build
     projects: src/FooLib/FooLib.csproj
     configuration: $(buildConfiguration)
-    arguments: --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
-- publish: .
+    buildProperties: VersionSuffix="ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+- publish: 
   artifact: linux-build
 - task: DotNetCoreCLI@2
   displayName: "Pack Nuget package"
@@ -31,14 +31,13 @@ steps:
     command: pack
     projects: src/FooLib/FooLib.csproj
     configuration: $(buildConfiguration)
-    # outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
+    outputDir: $(Build.ArtifactStagingDirectory)/packages/ci
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
   inputs:
     command: push
     publishVstsFeed: FooLib
-    # packagesToPush: $(Build.ArtifactStagingDirectory)/**/*-ci.nupkg
-    packagesToPush: src/**/*-ci.*.nupkg
+    packagesToPush: $(Build.ArtifactStagingDirectory)/**/*-ci.nupkg
 - task: DotNetCoreCLI@2
   displayName: "Execute Unit Tests"
   inputs:
