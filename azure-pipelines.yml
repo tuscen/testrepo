@@ -33,14 +33,6 @@ steps:
     publishVstsFeed: FooLib
     packagesToPush: src/**/*-ci+*.nupkg
 - task: DotNetCoreCLI@2
-  displayName: "List Unit Tests"
-  inputs:
-    command: test
-    projects: test/FooLibTests/FooLibTests.csproj
-    configuration: $(buildConfiguration)
-    arguments: --list-tests
-    workingDirectory: $(Build.SourcesDirectory)
-- task: DotNetCoreCLI@2
   displayName: "Execute Unit Tests"
   inputs:
     command: test
