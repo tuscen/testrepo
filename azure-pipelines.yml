@@ -5,7 +5,7 @@ trigger:
       - 'master'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -21,8 +21,6 @@ steps:
   inputs:
     command: build
     projects: src/FooLib/FooLib.csproj
-    # configuration: $(buildConfiguration)
-    # buildProperties: VersionSuffix="ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
     arguments: >
       --configuration $(buildConfiguration)
       --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
@@ -33,7 +31,6 @@ steps:
   inputs:
     command: pack
     projects: src/FooLib/FooLib.csproj
-    # configuration: $(buildConfiguration)
     outputDir: $(Build.ArtifactStagingDirectory)/packages/ci
     arguments: >
       --configuration $(buildConfiguration)
