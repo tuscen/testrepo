@@ -20,6 +20,7 @@ steps:
     workingDirectory: $(Build.SourcesDirectory)
     arguments: --version-suffix ci+$(Build.BuildId).$(Build.SourceVersion)
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
+    packagesToPack: src/FooLib/FooLib.csproj
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
   condition: succeeded()
