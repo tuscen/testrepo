@@ -21,7 +21,7 @@ steps:
   inputs:
     command: build
     projects: src/FooLib/FooLib.csproj
-    configuration: "Release"
+    configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
     arguments: --version-suffix ci+$(Build.BuildId).$(Build.SourceVersion)
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
@@ -37,15 +37,15 @@ steps:
   inputs:
     command: test
     projects: test/FooLibTests/FooLibTests.csproj
-    configuration: "Release"
-    arguments: --list-tests test/FooLibTests/
+    configuration: $(buildConfiguration)
+    arguments: --list-tests
     workingDirectory: $(Build.SourcesDirectory)
 - task: DotNetCoreCLI@2
   displayName: "Execute Unit Tests"
   inputs:
     command: test
     projects: test/FooLibTests/FooLibTests.csproj
-    configuration: "Release"
+    configuration: $(buildConfiguration)
     arguments: >
       --no-build 
       --verbosity normal
