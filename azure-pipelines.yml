@@ -26,7 +26,6 @@ steps:
     projects: src/FooLib/FooLib.csproj
     configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
-    nobuild: true
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
