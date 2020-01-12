@@ -23,7 +23,7 @@ steps:
     projects: src/FooLib/FooLib.csproj
     configuration: "Release"
     workingDirectory: $(Build.SourcesDirectory)
-    arguments: --version-suffix "ci-${BUILD_BUILDID}+${BUILD_SOURCEVERSION}"
+    arguments: --version-suffix 'ci-$(Build.BuildId)+$(Build.SourceVersion)'
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
