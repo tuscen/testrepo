@@ -11,11 +11,6 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: UseDotNet@2
-  displayName: "Install .NET Core 3.1 SDK"
-  inputs:
-    packageType: sdk
-    version: 3.1.100
 - task: DotNetCoreCLI@2
   displayName: "Build Package with CI version"
   inputs:
@@ -25,6 +20,7 @@ steps:
     workingDirectory: $(Build.SourcesDirectory)
     arguments: --version-suffix ci+$(Build.BuildId).$(Build.SourceVersion)
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
+    packagesToPack: '$(Build.SourcesDirectory)/src/**/*.csproj'
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
   condition: succeeded()
