@@ -23,7 +23,7 @@ steps:
     projects: src/FooLib/FooLib.csproj
     configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
-    arguments: --version-suffix ci+$(Build.BuildId).$(Build.SourceVersion)
+    arguments: --version-suffix "ci+$(Build.BuildId).$(Build.SourceVersion)"
 - task: DotNetCoreCLI@2
   displayName: "Pack Nuget package"
   inputs:
@@ -37,7 +37,7 @@ steps:
   inputs:
     command: push
     publishVstsFeed: FooLib
-    packagesToPush: $(Build.ArtifactStagingDirectory)/**/*-ci+*.nupkg
+    packagesToPush: $(Build.ArtifactStagingDirectory)/**/*-ci*.nupkg
 - task: DotNetCoreCLI@2
   displayName: "Execute Unit Tests"
   inputs:
