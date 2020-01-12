@@ -19,7 +19,6 @@ steps:
     configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
     arguments: --version-suffix ci+$(Build.BuildId).$(Build.SourceVersion)
-    outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
 - task: DotNetCoreCLI@2
   displayName: "Pack Nuget package"
   inputs:
@@ -27,7 +26,7 @@ steps:
     projects: src/FooLib/FooLib.csproj
     configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
-    arguments: --no-build
+    nobuild: true
     outputDir: '$(Build.ArtifactStagingDirectory)/packages/pipeline'
 - task: NuGetCommand@2
   displayName: "Publish CI Package to Azure Artifacts"
