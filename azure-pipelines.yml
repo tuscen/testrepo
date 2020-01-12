@@ -24,6 +24,8 @@ steps:
     configuration: $(buildConfiguration)
     workingDirectory: $(Build.SourcesDirectory)
     arguments: --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+- publish: .
+  artifact: linux-build
 - task: DotNetCoreCLI@2
   displayName: "Pack Nuget package"
   inputs:
