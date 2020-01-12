@@ -30,7 +30,7 @@ steps:
   displayName: "Publish CI Package to Azure Artifacts"
   inputs:
     command: push
-    publishVstsFeed: FooLib
+    publishVstsFeed: testrepo/FooLib
     packagesToPush: src/**/*-ci.*.nupkg
 - task: DotNetCoreCLI@2
   displayName: "Execute Unit Tests"
