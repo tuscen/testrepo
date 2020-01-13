@@ -21,10 +21,8 @@ stages:
             inputs:
               version: 3.1.100
               packageType: sdk
-          - task: DotNetCoreCLI@2
+          - script: dotnet help
             displayName: Initialize .NET Core Environment
-            inputs:
-              command: help
           - task: DotNetCoreCLI@2
             displayName: Build Package
             inputs:
@@ -94,10 +92,8 @@ stages:
             inputs:
               version: 3.1.100
               packageType: sdk
-          - task: DotNetCoreCLI@2
+          - script: dotnet help
             displayName: Initialize .NET Core Environment
-            inputs:
-              command: help
           - task: DotNetCoreCLI@2
             displayName: Execute Unit Tests
             inputs:
