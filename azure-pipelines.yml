@@ -1,7 +1,8 @@
 trigger:
   batch: true
-  include:
-    - '*'
+  branches:
+    include:
+      - '*'
 
 variables:
   buildConfiguration: Release
