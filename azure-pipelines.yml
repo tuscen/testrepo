@@ -36,17 +36,18 @@ stages:
               command: pack
               projects: src/FooLib/FooLib.csproj
               packDirectory: $(Build.ArtifactStagingDirectory)/packages/release
-              nobuild: true
               arguments: >
+                --no-build
                 --configuration $(buildConfiguration)
+              nobuild: true
           - task: DotNetCoreCLI@2
             displayName: Pack CI Package
             inputs:
               command: pack
               projects: src/FooLib/FooLib.csproj
               packDirectory: $(Build.ArtifactStagingDirectory)/packages/ci
-              nobuild: true
               arguments: >
+                --no-build
                 --configuration $(buildConfiguration)
                 --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
@@ -60,7 +61,7 @@ stages:
       - job: PublishArtifacts
         displayName: Publish Artifacts
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: windows-2019
         steps:
           - checkout: none
           - download: current
@@ -72,6 +73,7 @@ stages:
               command: push
               publishVstsFeed: testrepo/FooLib
               packagesToPush: '$(Pipeline.Workspace)/packages/ci/*.nupkg'
+              allowPackageConflicts: true
 
   - stage: UnitTest
     dependsOn: PublishArtifacts
