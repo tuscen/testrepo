@@ -54,11 +54,11 @@ stages:
 
   - stage: PublishArtifacts
     dependsOn: Build
-    condition: succeeded()
     displayName: 📤
+    condition: succeeded()
     jobs:
       - job: PublishArtifacts
-        displayName: Build with .NET Core SDK on Ubuntu
+        displayName: Publish Artifacts
         pool:
           vmImage: ubuntu-18.04
         steps:
@@ -71,12 +71,12 @@ stages:
             inputs:
               command: push
               publishVstsFeed: testrepo/FooLib
-              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+              packagesToPush: '$(Pipeline.Workspace)/packages/ci/*.nupkg'
 
   - stage: UnitTest
     dependsOn: PublishArtifacts
     displayName: 🧪
-    condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), succeeded())
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: UnitTest
         displayName: Run Unit Tests
@@ -130,5 +130,5 @@ stages:
               includeNugetOrg: true
               nuGetFeedType: external
               publishFeedCredentials: NuGet
-              packagesToPush: $(Pipeline.Workspace)/packages/release/*.nupkg
+              packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
               allowPackageConflicts: true
