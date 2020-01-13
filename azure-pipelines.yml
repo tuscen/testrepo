@@ -53,6 +53,8 @@ stages:
             artifact: packages
 
   - stage: PublishArtifacts
+    dependsOn: Build
+    condition: succeeded()
     displayName: 📤
     jobs:
       - job: PublishArtifacts
@@ -71,8 +73,9 @@ stages:
               packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
 
   - stage: UnitTest
+    dependsOn: PublishArtifacts
     displayName: 🧪
-    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), succeeded())
     jobs:
       - job: UnitTest
         displayName: Run Unit Tests
@@ -108,7 +111,8 @@ stages:
 
   - stage: Release
     displayName: 🚀
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    dependsOn: UnitTest
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: Release
         displayName: Publish Package to NuGet
