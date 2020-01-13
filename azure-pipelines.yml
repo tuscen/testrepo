@@ -1,5 +1,7 @@
 trigger:
   batch: true
+  include:
+    - '*'
 
 variables:
   buildConfiguration: Release
