@@ -51,7 +51,6 @@ stages:
                 --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
-            patterns: '*/**/*.nupkg'
 
   - stage: PublishArtifacts
     dependsOn: Build
@@ -66,6 +65,7 @@ stages:
           - checkout: none
           - download: current
             artifact: packages
+            patterns: '*/**/*.nupkg'
           - task: NuGetCommand@2
             displayName: Publish CI Package to Azure Artifacts
             inputs:
@@ -122,6 +122,7 @@ stages:
         steps:
           - checkout: none
           - download: packages
+            patterns: '*/**/*.nupkg'
           - task: NuGetCommand@2
             displayName: Publish Package to NuGet
             inputs:
