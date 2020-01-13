@@ -10,61 +10,67 @@ variables:
 stages:
   - stage: Build
     displayName: 🚧
-    pool:
-      vmImage: ubuntu-18.04
-    steps:
-      - task: UseDotNet@2
-        displayName: Install .NET Core 3.1 SDK
-        inputs:
-          version: 3.1.100
-          packageType: sdk
-      - task: DotNetCoreCLI@2
-        displayName: Initialize .NET Core Environment
-        inputs:
-          command: help
-      - task: DotNetCoreCLI@2
-        displayName: Build Package
-        inputs:
-          command: build
-          projects: src/FooLib/FooLib.csproj
-          arguments: >
-            --configuration $(buildConfiguration)
-      - task: DotNetCoreCLI@2
-        displayName: Pack Release Package
-        inputs:
-          command: pack
-          projects: src/FooLib/FooLib.csproj
-          packDirectory: $(Build.ArtifactStagingDirectory)/packages/release
-          nobuild: true
-          arguments: >
-            --configuration $(buildConfiguration)
-      - task: DotNetCoreCLI@2
-        displayName: Pack CI Package
-        inputs:
-          command: pack
-          projects: src/FooLib/FooLib.csproj
-          packDirectory: $(Build.ArtifactStagingDirectory)/packages/ci
-          nobuild: true
-          arguments: >
-            --configuration $(buildConfiguration)
-            --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
-      - publish: $(Build.ArtifactStagingDirectory)/packages
-        artifact: packages
+    jobs:
+      - job: BuildOnUbuntu
+        displayName: Build with .NET Core SDK on Ubuntu
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: 3.1.100
+              packageType: sdk
+          - task: DotNetCoreCLI@2
+            displayName: Initialize .NET Core Environment
+            inputs:
+              command: help
+          - task: DotNetCoreCLI@2
+            displayName: Build Package
+            inputs:
+              command: build
+              projects: src/FooLib/FooLib.csproj
+              arguments: >
+                --configuration $(buildConfiguration)
+          - task: DotNetCoreCLI@2
+            displayName: Pack Release Package
+            inputs:
+              command: pack
+              projects: src/FooLib/FooLib.csproj
+              packDirectory: $(Build.ArtifactStagingDirectory)/packages/release
+              nobuild: true
+              arguments: >
+                --configuration $(buildConfiguration)
+          - task: DotNetCoreCLI@2
+            displayName: Pack CI Package
+            inputs:
+              command: pack
+              projects: src/FooLib/FooLib.csproj
+              packDirectory: $(Build.ArtifactStagingDirectory)/packages/ci
+              nobuild: true
+              arguments: >
+                --configuration $(buildConfiguration)
+                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+          - publish: $(Build.ArtifactStagingDirectory)/packages
+            artifact: packages
 
   - stage: PublishArtifacts
     displayName: 📤
-    pool:
-      vmImage: ubuntu-18.04
-    steps:
-      - checkout: none
-      - download: current
-        artifact: packages
-      - task: NuGetCommand@2
-        displayName: Publish CI Package to Azure Artifacts
-        inputs:
-          command: push
-          publishVstsFeed: testrepo/FooLib
-          packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+    jobs:
+      - job: PublishArtifacts
+        displayName: Build with .NET Core SDK on Ubuntu
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - checkout: none
+          - download: current
+            artifact: packages
+          - task: NuGetCommand@2
+            displayName: Publish CI Package to Azure Artifacts
+            inputs:
+              command: push
+              publishVstsFeed: testrepo/FooLib
+              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
 
   - stage: UnitTest
     displayName: 🧪
@@ -101,7 +107,6 @@ stages:
               configuration: $(buildConfiguration)
               arguments: >
                 --verbosity normal
-                --configuration $(buildConfiguration)
               publishTestResults: true
               workingDirectory: $(Build.SourcesDirectory)
 
