@@ -1,0 +1,2 @@
+**/*
+!src/FooLib/bin/Release/**.nupkg
