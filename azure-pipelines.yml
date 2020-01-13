@@ -51,7 +51,7 @@ stages:
                 --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
-            pattern: '*/**/*.nupkg'
+            patterns: '*/**/*.nupkg'
 
   - stage: PublishArtifacts
     dependsOn: Build
