@@ -27,22 +27,28 @@ stages:
             displayName: Build Package
             inputs:
               command: build
+              configuration: $(buildConfiguration)
               projects: src/FooLib/FooLib.csproj
-              arguments: --configuration $(buildConfiguration)
           - task: DotNetCoreCLI@2
             displayName: Pack Release Package
             inputs:
-              command: pack
+              command: custom
+              custom: pack
               projects: src/FooLib/FooLib.csproj
               packDirectory: $(Build.ArtifactStagingDirectory)/packages/release
-              arguments: --no-build --configuration $(buildConfiguration)
+              nobuild: true
+              configuration: $(buildConfiguration)
           - task: DotNetCoreCLI@2
             displayName: Pack CI Package
             inputs:
-              command: pack
+              command: custom
+              custom: pack
               projects: src/FooLib/FooLib.csproj
               packDirectory: $(Build.ArtifactStagingDirectory)/packages/ci
-              arguments: --no-build --configuration $(buildConfiguration) --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+              nobuild: true
+              configuration: $(buildConfiguration)
+              arguments: >
+                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
