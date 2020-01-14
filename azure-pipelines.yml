@@ -29,13 +29,15 @@ stages:
               command: build
               configuration: $(buildConfiguration)
               projects: src/FooLib/FooLib.csproj
-          - script: dotnet pack >
+          - script: >
+              dotnet pack
               --no-build
               --project src/FooLib/FooLib.csproj
               --output $(Build.ArtifactStagingDirectory)/packages/release
               --configuration $(buildConfiguration)
             displayName: Pack Release Package
-          - script: dotnet pack >
+          - script: >
+              dotnet pack
               --no-build
               --project src/FooLib/FooLib.csproj
               --output $(Build.ArtifactStagingDirectory)/packages/ci
@@ -97,7 +99,6 @@ stages:
             inputs:
               command: test
               projects: test/FooLibTests/FooLibTests.csproj
-              nobuild: true
               configuration: $(buildConfiguration)
               arguments: >
                 --verbosity normal
