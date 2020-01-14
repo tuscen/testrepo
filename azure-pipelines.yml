@@ -14,6 +14,7 @@ stages:
       - job: BuildOnWindows
         displayName: Build with .NET Core SDK on Windows
         pool:
+          # windows image is used because it's the only way to use NugetCommand
           vmImage: windows-2019
         steps:
           - task: UseDotNet@2
@@ -27,16 +28,19 @@ stages:
             displayName: Build Package
             inputs:
               command: build
-              configuration: $(buildConfiguration)
               projects: src/FooLib/FooLib.csproj
-          - script: >
+              arguments: >
+                --configuration $(buildConfiguration)
+          # DotNetCoreCLI@2 with pack ignores arguments input
+          # resorting to bash here
+          - bash: >
               dotnet pack
               --no-build
               --output $(Build.ArtifactStagingDirectory)/packages/release
               --configuration $(buildConfiguration)
               src/FooLib/FooLib.csproj
             displayName: Pack Release Package
-          - script: >
+          - bash: >
               dotnet pack
               --no-build
               --output $(Build.ArtifactStagingDirectory)/packages/ci
