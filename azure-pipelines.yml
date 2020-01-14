@@ -32,12 +32,12 @@ stages:
               projects: src/FooLib/FooLib.csproj
               arguments: >
                 --configuration $(buildConfiguration)
-                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
           # Quotes around output path are needed so backslashes aren't interpreted
           # as escape symbols effectively cutting them out.
           - bash: >
               dotnet pack
+              --no-build
               --output "$(Build.ArtifactStagingDirectory)\packages\release"
               --configuration $(buildConfiguration)
               src/FooLib/FooLib.csproj
@@ -45,22 +45,14 @@ stages:
           # Currently creating a package with semver 2.0 gives a warning about older
           # clients, that's fine. It can't be disabled without disabling all package analysing
           # during pack so we can just ignore it.
-#          - bash: >
-#              dotnet pack
-#              --output "$(Build.ArtifactStagingDirectory)\packages\ci"
-#              --configuration $(buildConfiguration)
-#              --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
-#              src/FooLib/FooLib.csproj
-#            displayName: Pack CI Package
-          - task: DotNetCoreCLI@2
-            displayName: Build Package
-            inputs:
-              command: build
-              projects: src/FooLib/FooLib.csproj
-              arguments: >
-                --output "$(Build.ArtifactStagingDirectory)\packages\ci"
-                --configuration $(buildConfiguration)
-                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+          - bash: >
+              dotnet pack
+              --no-build
+              --output "$(Build.ArtifactStagingDirectory)\packages\ci"
+              --configuration $(buildConfiguration)
+              --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+              src/FooLib/FooLib.csproj
+            displayName: Pack CI Package
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
