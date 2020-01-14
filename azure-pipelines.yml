@@ -53,14 +53,14 @@ stages:
 #              src/FooLib/FooLib.csproj
 #            displayName: Pack CI Package
           - task: DotNetCoreCLI@2
-              displayName: Build Package
-              inputs:
-                command: build
-                projects: src/FooLib/FooLib.csproj
-                arguments: >
-                  --output "$(Build.ArtifactStagingDirectory)\packages\ci"
-                  --configuration $(buildConfiguration)
-                  --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+            displayName: Build Package
+            inputs:
+              command: build
+              projects: src/FooLib/FooLib.csproj
+              arguments: >
+                --output "$(Build.ArtifactStagingDirectory)\packages\ci"
+                --configuration $(buildConfiguration)
+                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
