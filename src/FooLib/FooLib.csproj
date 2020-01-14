@@ -6,6 +6,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <VersionPrefix>0.0.2</VersionPrefix>
     <PackageId>Tuscen.FooLib</PackageId>
+    <PackageVersion>0.0.3</PackageVersion>
   </PropertyGroup>
 
 </Project>

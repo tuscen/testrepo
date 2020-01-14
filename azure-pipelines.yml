@@ -14,8 +14,8 @@ stages:
       - job: BuildOnWindows
         displayName: Build with .NET Core SDK on Windows
         pool:
-          # windows image is used because it's the only way to use NugetCommand with
-          # support of ignoring accidental publishing of packages with the same version
+          # windows image is used because it's the only way to use NugetCommand@2 with
+          # support of ignoring publishing of packages with the same version
           vmImage: windows-2019
         steps:
           - task: UseDotNet@2
@@ -32,7 +32,9 @@ stages:
               projects: src/FooLib/FooLib.csproj
               arguments: >
                 --configuration $(buildConfiguration)
-          # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here
+          # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
+          # Quotes around output path are needed so backslashes aren't interpreted
+          # as escape symbols effectively cutting them out.
           - bash: >
               dotnet pack
               --no-build
@@ -67,13 +69,14 @@ stages:
           - checkout: none
           - download: current
             artifact: packages
+            # quotes are needed since * can't be used as the first character without quotes
             patterns: '*/**/*.nupkg'
           - task: NuGetCommand@2
             displayName: Publish CI Package to Azure Artifacts
             inputs:
               command: push
               publishVstsFeed: testrepo/FooLib
-              packagesToPush: '$(Pipeline.Workspace)/packages/ci/*.nupkg'
+              packagesToPush: "$(Pipeline.Workspace)/packages/ci/*.nupkg"
               allowPackageConflicts: true
 
   - stage: UnitTest
@@ -124,7 +127,8 @@ stages:
         steps:
           - checkout: none
           - download: packages
-            patterns: '*/**/*.nupkg'
+            # don't remove quotes
+            patterns: "*/**/*.nupkg"
           - task: NuGetCommand@2
             displayName: Publish Package to NuGet
             inputs:
