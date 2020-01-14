@@ -19,7 +19,7 @@ stages:
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
-              version: 3.1.100
+              version: 3.1.101
               packageType: sdk
           - script: dotnet help
             displayName: Initialize .NET Core Environment
@@ -29,26 +29,19 @@ stages:
               command: build
               configuration: $(buildConfiguration)
               projects: src/FooLib/FooLib.csproj
-          - task: DotNetCoreCLI@2
-            displayName: Pack Release Package
-            inputs:
-              command: custom
-              custom: pack
-              projects: src/FooLib/FooLib.csproj
-              packDirectory: $(Build.ArtifactStagingDirectory)/packages/release
-              nobuild: true
-              configuration: $(buildConfiguration)
-          - task: DotNetCoreCLI@2
-            displayName: Pack CI Package
-            inputs:
-              command: custom
-              custom: pack
-              projects: src/FooLib/FooLib.csproj
-              packDirectory: $(Build.ArtifactStagingDirectory)/packages/ci
-              nobuild: true
-              configuration: $(buildConfiguration)
-              arguments: >
-                --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+          - displayName: Pack Release Package
+            script: dotnet pack >
+              --no-build
+              --project src/FooLib/FooLib.csproj
+              --output $(Build.ArtifactStagingDirectory)/packages/release
+              --configuration $(buildConfiguration)
+          - displayName: Pack CI Package
+            script: dotnet pack >
+              --no-build
+              --project src/FooLib/FooLib.csproj
+              --output $(Build.ArtifactStagingDirectory)/packages/ci
+              --configuration $(buildConfiguration)
+              --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
@@ -95,7 +88,7 @@ stages:
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
-              version: 3.1.100
+              version: 3.1.101
               packageType: sdk
           - script: dotnet help
             displayName: Initialize .NET Core Environment
