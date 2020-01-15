@@ -70,7 +70,7 @@ stages:
           - download: current
             artifact: packages
             # quotes are needed since * can't be used as the first character without quotes
-            patterns: "*/**/*.nupkg;*/**/*.snupkg"
+            patterns: "*/**/*.*upkg"
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
@@ -85,7 +85,7 @@ stages:
               nuGetFeedType: internal
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
-              packagesToPush: "$(Pipeline.Workspace)/packages/ci/*.nupkg;$(Pipeline.Workspace)/packages/ci/*.snupkg"
+              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
 #          - task: NuGetCommand@2
 #            displayName: Publish CI Package to Azure Artifacts
