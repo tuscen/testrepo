@@ -15,7 +15,7 @@ variables:
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
   ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackagePath: src/test/FooLibTests
+  unitTestsPackagePath: $(Build.SourcesDirectory)/src/test/FooLibTests
 
 stages:
   - stage: Build

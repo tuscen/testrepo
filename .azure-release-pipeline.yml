@@ -16,7 +16,7 @@ variables:
   internalFeedName: testrepo/FooLib
   externalFeedName: NuGet
   ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackagePath: src/test/FooLibTests
+  unitTestsPackagePath: $(Build.SourcesDirectory)/src/test/FooLibTests
 
 stages:
   - stage: Build
