@@ -9,7 +9,7 @@ variables:
 
 stages:
   - stage: Build
-    displayName: 🚧
+    displayName: 🚧 Build
     jobs:
       - job: BuildOnWindows
         displayName: Build with .NET Core SDK on Windows
@@ -58,7 +58,7 @@ stages:
 
   - stage: PublishArtifacts
     dependsOn: Build
-    displayName: 📤
+    displayName: 📤 Publish artifacts
     condition: succeeded()
     jobs:
       - job: PublishArtifacts
@@ -81,7 +81,7 @@ stages:
 
   - stage: UnitTest
     dependsOn: PublishArtifacts
-    displayName: 🧪
+    displayName: 🧪 Unit test
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: UnitTest
@@ -116,9 +116,9 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)
 
   - stage: Release
-    displayName: 🚀
+    displayName: 🚀 Release
     dependsOn: UnitTest
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
       - job: Release
         displayName: Publish Package to NuGet
