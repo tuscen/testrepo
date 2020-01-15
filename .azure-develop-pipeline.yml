@@ -85,9 +85,7 @@ stages:
               nuGetFeedType: internal
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
-              packagesToPush:
-                - $(Pipeline.Workspace)/packages/ci/*.nupkg
-                - $(Pipeline.Workspace)/packages/ci/*.snupkg
+              packagesToPush: "$(Pipeline.Workspace)/packages/ci/*.nupkg;$(Pipeline.Workspace)/packages/ci/*.snupkg"
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
 #          - task: NuGetCommand@2
 #            displayName: Publish CI Package to Azure Artifacts
