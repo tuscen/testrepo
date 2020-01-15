@@ -48,10 +48,9 @@ stages:
           - bash: >
               dotnet pack
               --no-build
-              --output "$(Build.ArtifactStagingDirectory)\packages\ci"
+              --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
               --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
-              --include-symbols
               $(projectPath)
             displayName: Pack CI Package
           - publish: $(Build.ArtifactStagingDirectory)/packages
@@ -71,7 +70,7 @@ stages:
           - download: current
             artifact: packages
             # quotes are needed since * can't be used as the first character without quotes
-            patterns: '*/**/*.nupkg'
+            patterns: "*/**/*.nupkg;*/**/*.snupkg"
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
@@ -86,14 +85,18 @@ stages:
               nuGetFeedType: internal
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
-              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+              packagesToPush:
+                - $(Pipeline.Workspace)/packages/ci/*.nupkg
+                - $(Pipeline.Workspace)/packages/ci/*.snupkg
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
 #          - task: NuGetCommand@2
 #            displayName: Publish CI Package to Azure Artifacts
 #            inputs:
 #              command: push
 #              publishVstsFeed: $(internalFeedName)
-#              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+#              packagesToPush:
+#                  - $(Pipeline.Workspace)/packages/ci/*.nupkg
+#                  - $(Pipeline.Workspace)/packages/ci/*.snupkg
 #              allowPackageConflicts: true
 
   - stage: UnitTest

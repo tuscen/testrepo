@@ -5,6 +5,8 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <VersionPrefix>0.0.6</VersionPrefix>
     <PackageId>Tuscen.FooLib</PackageId>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
