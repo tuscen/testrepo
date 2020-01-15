@@ -1,0 +1,133 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - develop
+  paths:
+    exclude:
+      - docs/*
+      - "**/*.md"
+      - .travis.yml
+
+variables:
+  buildConfiguration: Release
+  sdkVersion: 3.1.100
+  projectPath: src/FooLib/FooLib.csproj
+  internalFeedName: testrepo/FooLib
+
+stages:
+  - stage: Build
+    displayName: 🚧 Build
+    jobs:
+      - job: Build
+        displayName: Build with .NET Core SDK
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+          - task: DotNetCoreCLI@2
+            displayName: Build Package
+            inputs:
+              command: build
+              projects: $(projectPath)
+              arguments: >
+                --configuration $(buildConfiguration)
+          # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
+          # TODO replace with DotNetCoreCLI task when it's fixed
+          # Quotes around output path are needed so backslashes aren't interpreted
+          # as escape symbols effectively cutting them out.
+          # Currently creating a package with semver 2.0 gives a warning about older
+          # clients, that's fine. It can't be disabled without disabling all package analysing
+          # during pack so we can just ignore it.
+          - bash: >
+              dotnet pack
+              --no-build
+              --output "$(Build.ArtifactStagingDirectory)\packages\ci"
+              --configuration $(buildConfiguration)
+              --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+              --include-symbols
+              $(projectPath)
+            displayName: Pack CI Package
+          - publish: $(Build.ArtifactStagingDirectory)/packages
+            artifact: packages
+
+  - stage: PublishArtifacts
+    dependsOn: Build
+    displayName: 📤 Publish artifacts
+    condition: succeeded()
+    jobs:
+      - job: PublishArtifacts
+        displayName: Publish Artifacts
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - checkout: none
+          - download: current
+            artifact: packages
+            # quotes are needed since * can't be used as the first character without quotes
+            patterns: '*/**/*.nupkg'
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+          - task: DotNetCoreCLI@2
+            displayName: Publish CI Package to Azure Artifacts
+            inputs:
+              command: push
+              nuGetFeedType: internal
+              feedPublish: $(internalFeedName)
+              publishPackageMetadata: true
+              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
+#          - task: NuGetCommand@2
+#            displayName: Publish CI Package to Azure Artifacts
+#            inputs:
+#              command: push
+#              publishVstsFeed: $(internalFeedName)
+#              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.nupkg
+#              allowPackageConflicts: true
+
+  - stage: UnitTest
+    dependsOn: PublishArtifacts
+    displayName: 🧪 Unit test
+    condition: succeeded()
+    jobs:
+      - job: UnitTest
+        displayName: Run Unit Tests
+        strategy:
+          matrix:
+            Windows:
+              VM_IMAGE: windows-2019
+            Ubuntu:
+              VM_IMAGE: ubuntu-18.04
+            macOS:
+              VM_IMAGE: macOS-10.14
+        pool:
+          vmImage: $(VM_IMAGE)
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+          - task: DotNetCoreCLI@2
+            displayName: Execute Unit Tests
+            inputs:
+              command: test
+              projects: $(projectPath)
+              configuration: $(buildConfiguration)
+              arguments: >
+                --verbosity normal
+              publishTestResults: true
+              workingDirectory: $(Build.SourcesDirectory)
