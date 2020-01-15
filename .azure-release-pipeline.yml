@@ -1,0 +1,142 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - docs/*
+      - "**/*.md"
+      - .travis.yml
+
+variables:
+  buildConfiguration: Release
+  sdkVersion: 3.1.100
+  projectPath: src/FooLib/FooLib.csproj
+  internalFeedName: testrepo/FooLib
+  externalFeedName: NuGet
+
+stages:
+  - stage: Build
+    displayName: 🚧 Build
+    jobs:
+      - job: Build
+        displayName: Build with .NET Core SDK
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+          - task: DotNetCoreCLI@2
+            displayName: Build Package
+            inputs:
+              command: build
+              projects: $(projectPath)
+              arguments: >
+                --configuration $(buildConfiguration)
+          # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
+          # TODO replace with DotNetCoreCLI task when it's fixed
+          # Quotes around output path are needed so backslashes aren't interpreted
+          # as escape symbols effectively cutting them out.
+          - bash: >
+              dotnet pack
+              --no-build
+              --output "$(Build.ArtifactStagingDirectory)/packages/release"
+              --configuration $(buildConfiguration)
+              $(projectPath)
+            displayName: Pack Release Package
+          - publish: $(Build.ArtifactStagingDirectory)/packages
+            artifact: packages
+
+  - stage: PublishArtifacts
+    dependsOn: Build
+    displayName: 📤 Publish artifacts
+    condition: succeeded()
+    jobs:
+      - job: PublishArtifacts
+        displayName: Publish Artifacts
+        pool:
+          vmImage: $(vm)
+        steps:
+          - checkout: none
+          - download: current
+            artifact: packages
+            # quotes are needed since * can't be used as the first character without quotes
+            patterns: "*/**/*.*upkg"
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+        - script: dotnet help
+          displayName: Initialize .NET Core Environment
+        - task: DotNetCoreCLI@2
+          displayName: Publish CI Package to Azure Artifacts
+            inputs:
+              command: push
+              nuGetFeedType: internal
+              feedPublish: $(internalFeedName)
+              publishPackageMetadata: true
+              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
+
+  - stage: UnitTest
+    dependsOn: PublishArtifacts
+    displayName: 🧪 Unit test
+    condition: succeeded()
+    jobs:
+      - job: UnitTest
+        displayName: Run Unit Tests
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+          - task: DotNetCoreCLI@2
+            displayName: Execute Unit Tests
+            inputs:
+              command: test
+              projects: test/FooLibTests/FooLibTests.csproj
+              configuration: $(buildConfiguration)
+              arguments: >
+                --verbosity normal
+              publishTestResults: true
+              workingDirectory: $(Build.SourcesDirectory)
+
+  - stage: Release
+    displayName: 🚀 Release
+    dependsOn: UnitTest
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - job: Release
+        displayName: Publish Package to NuGet
+        pool:
+          # windows image is used because it's the only way to use NugetCommand@2 with
+          # support of ignoring publishing of packages with the same version.
+          # Since SDK 3.1 dotnet push command has a flag to ignore duplicates but
+          # it isn't supported by DotNetCoreCLI@2 task yet.
+          vmImage: windows-2019
+        steps:
+          - checkout: none
+          - download: packages
+            # don't remove quotes
+            patterns: "*/**/*.*upkg"
+          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
+          - task: NuGetCommand@2
+            displayName: Publish Package to NuGet
+            inputs:
+              command: push
+              includeNugetOrg: true
+              nuGetFeedType: external
+              publishFeedCredentials: $(externalFeedName)
+              packagesToPush: $(Pipeline.Workspace)/packages/release/*.*upkg
+              allowPackageConflicts: true

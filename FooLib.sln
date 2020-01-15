@@ -13,7 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FooLibTests", "test\FooLibT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution files", "solution files", "{7043B7CF-406E-49DA-B4C7-2BF0A153A1AC}"
 ProjectSection(SolutionItems) = preProject
-	azure-pipelines.yml = azure-pipelines.yml
+	.azure-develop-pipeline.yml = .azure-develop-pipeline.yml
+	.azure-release-pipeline.yml = .azure-release-pipeline.yml
+	.azure-default-pipeline.yml = .azure-default-pipeline.yml
 EndProjectSection
 EndProject
 Global
