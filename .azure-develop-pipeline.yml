@@ -14,6 +14,7 @@ variables:
   sdkVersion: 3.1.100
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
+  ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
 
 stages:
   - stage: Build
@@ -24,13 +25,17 @@ stages:
         pool:
           vmImage: ubuntu-18.04
         steps:
+          - script: echo $(System.PullRequest.IsFork)
+
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
           - script: dotnet help
             displayName: Initialize .NET Core Environment
+
           - task: DotNetCoreCLI@2
             displayName: Build Package
             inputs:
@@ -38,6 +43,8 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
+                --version-suffix "$(ciBuildVersion)"
+
           # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
           # TODO replace with DotNetCoreCLI task when it's fixed
           # Quotes around output path are needed so backslashes aren't interpreted
@@ -50,9 +57,10 @@ stages:
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
-              --version-suffix "ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)"
+              --version-suffix "$(ciBuildVersion)"
               $(projectPath)
             displayName: Pack CI Package
+
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
@@ -67,17 +75,21 @@ stages:
           vmImage: ubuntu-18.04
         steps:
           - checkout: none
+
           - download: current
             artifact: packages
             # quotes are needed since * can't be used as the first character without quotes
             patterns: "*/**/*.*upkg"
+
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
           - script: dotnet help
             displayName: Initialize .NET Core Environment
+
           - task: DotNetCoreCLI@2
             displayName: Publish CI Package to Azure Artifacts
             inputs:
@@ -86,16 +98,6 @@ stages:
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
               packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
-          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
-#          - task: NuGetCommand@2
-#            displayName: Publish CI Package to Azure Artifacts
-#            inputs:
-#              command: push
-#              publishVstsFeed: $(internalFeedName)
-#              packagesToPush:
-#                  - $(Pipeline.Workspace)/packages/ci/*.nupkg
-#                  - $(Pipeline.Workspace)/packages/ci/*.snupkg
-#              allowPackageConflicts: true
 
   - stage: UnitTest
     dependsOn: PublishArtifacts
@@ -120,8 +122,10 @@ stages:
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
           - script: dotnet help
             displayName: Initialize .NET Core Environment
+
           - task: DotNetCoreCLI@2
             displayName: Execute Unit Tests
             inputs:
