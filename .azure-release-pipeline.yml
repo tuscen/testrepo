@@ -15,6 +15,7 @@ variables:
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
   externalFeedName: NuGet
+  ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
 
 stages:
   - stage: Build
@@ -25,20 +26,24 @@ stages:
         pool:
           vmImage: ubuntu-18.04
         steps:
+
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
           - script: dotnet help
             displayName: Initialize .NET Core Environment
+
           - task: DotNetCoreCLI@2
-            displayName: Build Package
+            displayName: Build release package
             inputs:
               command: build
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
+
           # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
           # TODO replace with DotNetCoreCLI task when it's fixed
           # Quotes around output path are needed so backslashes aren't interpreted
@@ -49,32 +54,61 @@ stages:
               --output "$(Build.ArtifactStagingDirectory)/packages/release"
               --configuration $(buildConfiguration)
               $(projectPath)
-            displayName: Pack Release Package
+            displayName: Create release package
+
+          - task: DotNetCoreCLI@2
+            displayName: Build CI package
+            inputs:
+              command: build
+              projects: $(projectPath)
+              arguments: >
+                --configuration $(buildConfiguration)
+                --version-suffix "$(ciBuildVersion)"
+
+          # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
+          # TODO replace with DotNetCoreCLI task when it's fixed
+          # Quotes around output path are needed so backslashes aren't interpreted
+          # as escape symbols effectively cutting them out.
+          - bash: >
+              dotnet pack
+              --no-build
+              --output "$(Build.ArtifactStagingDirectory)/packages/ci"
+              --configuration $(buildConfiguration)
+              --version-suffix "$(ciBuildVersion)"
+              $(projectPath)
+            displayName: Create CI package
+
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
 
   - stage: PublishArtifacts
     dependsOn: Build
     displayName: 📤 Publish artifacts
-    condition: succeeded()
+    # publish artifacts only for pull requests that is coming from the same repo
+    condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
     jobs:
       - job: PublishArtifacts
         displayName: Publish Artifacts
         pool:
           vmImage: $(vm)
         steps:
+
           - checkout: none
+
           - download: current
             artifact: packages
             # quotes are needed since * can't be used as the first character without quotes
             patterns: "*/**/*.*upkg"
+
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
         - script: dotnet help
           displayName: Initialize .NET Core Environment
+
         - task: DotNetCoreCLI@2
           displayName: Publish CI Package to Azure Artifacts
             inputs:
@@ -94,13 +128,16 @@ stages:
         pool:
           vmImage: ubuntu-18.04
         steps:
+
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
             inputs:
               version: $(sdkVersion)
               packageType: sdk
+
           - script: dotnet help
             displayName: Initialize .NET Core Environment
+
           - task: DotNetCoreCLI@2
             displayName: Execute Unit Tests
             inputs:
@@ -126,10 +163,13 @@ stages:
           # it isn't supported by DotNetCoreCLI@2 task yet.
           vmImage: windows-2019
         steps:
+
           - checkout: none
+
           - download: packages
             # don't remove quotes
             patterns: "*/**/*.*upkg"
+
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
           - task: NuGetCommand@2
             displayName: Publish Package to NuGet

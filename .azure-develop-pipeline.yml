@@ -25,7 +25,6 @@ stages:
         pool:
           vmImage: ubuntu-18.04
         steps:
-          - script: echo $(System.PullRequest.IsFork)
 
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK
@@ -67,7 +66,8 @@ stages:
   - stage: PublishArtifacts
     dependsOn: Build
     displayName: 📤 Publish artifacts
-    condition: succeeded()
+    # publish artifacts only for pull requests that is coming from the same repo
+    condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
     jobs:
       - job: PublishArtifacts
         displayName: Publish Artifacts
