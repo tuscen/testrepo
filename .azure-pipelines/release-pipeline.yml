@@ -90,7 +90,7 @@ stages:
     condition: succeeded()
     jobs:
       - template: jobs/run-unit-tests.yml
-        parameteres:
+        parameters:
           vmImage: ubuntu-18.04
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)

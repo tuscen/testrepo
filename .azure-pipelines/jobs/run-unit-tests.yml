@@ -1,4 +1,4 @@
-parametes:
+parameters:
   vmImage: ''
   sdkVersion: ''
   buildConfiguration: ''

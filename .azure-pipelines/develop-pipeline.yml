@@ -75,21 +75,21 @@ stages:
     jobs:
 
       - template: jobs/run-unit-tests.yml
-        parameteres:
+        parameters:
           vmImage: ubuntu-18.04
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)
           projects: $(unitTestsProject)
 
       - template: jobs/run-unit-tests.yml
-        parameteres:
+        parameters:
           vmImage: windows-2019
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)
           projects: $(unitTestsProject)
 
       - template: jobs/run-unit-tests.yml
-        parameteres:
+        parameters:
           vmImage: macos-10.14
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)
