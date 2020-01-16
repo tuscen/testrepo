@@ -15,7 +15,7 @@ variables:
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
   externalFeedName: NuGet
-  ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
+  ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   unitTestsPackage: $(Build.SourcesDirectory)/src/test/FooLibTests/FooLibTests.csproj
 
 stages:
@@ -64,7 +64,7 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                --version-suffix "$(ciBuildVersion)"
+                --version-suffix "$(ciVersionSuffix)"
 
           # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
           # TODO replace with DotNetCoreCLI task when it's fixed
@@ -75,7 +75,7 @@ stages:
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
-              --version-suffix "$(ciBuildVersion)"
+              --version-suffix "$(ciVersionSuffix)"
               $(projectPath)
             displayName: Create CI package
 

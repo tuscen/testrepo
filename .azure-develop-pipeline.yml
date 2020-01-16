@@ -14,8 +14,9 @@ variables:
   sdkVersion: 3.1.100
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
-  ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
+  ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   unitTestsPackage: $(Build.SourcesDirectory)/src/test/FooLibTests/FooLibTests.csproj
+  integrationTestsPackage: $(Build.SourcesDirectory)/src/test/Integration/FooLibTests.Integration.csproj
 
 stages:
   - stage: Build
@@ -43,7 +44,7 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                --version-suffix "$(ciBuildVersion)"
+                --version-suffix "$(ciVersionSuffix)"
 
           # DotNetCoreCLI@2 with pack ignores arguments input, resorting to bash here.
           # TODO replace with DotNetCoreCLI task when it's fixed
@@ -57,7 +58,7 @@ stages:
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
-              --version-suffix "$(ciBuildVersion)"
+              --version-suffix "$(ciVersionSuffix)"
               $(projectPath)
             displayName: Pack CI Package
 
@@ -135,4 +136,34 @@ stages:
               configuration: $(buildConfiguration)
               arguments: >
                 --verbosity normal
+              publishTestResults: true
+
+  - stage: IntegrationTests
+    dependsOn: PublishArtifacts
+    displayName: 🧪 Integreation tests
+    condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
+    jobs:
+      - job: IntegrationTests
+        displayName: Run Integreation tests
+        pool:
+          vmImage: ubuntu-18.04
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
+            inputs:
+              version: $(sdkVersion)
+              packageType: sdk
+
+          - script: dotnet help
+            displayName: Initialize .NET Core Environment
+
+          - task: DotNetCoreCLI@2
+            displayName: Execute Unit Tests
+            inputs:
+              command: test
+              projects: $(integrationTestsPackage)
+              configuration: $(buildConfiguration)
+              arguments: >
+                --verbosity normal
+
               publishTestResults: true
