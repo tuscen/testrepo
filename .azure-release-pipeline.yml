@@ -169,7 +169,8 @@ stages:
 
           - checkout: none
 
-          - download: packages
+          - download: current
+            artifact: packages
             # don't remove quotes
             patterns: "*/**/*.*upkg"
 
