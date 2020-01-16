@@ -131,7 +131,7 @@ stages:
             displayName: Execute Unit Tests
             inputs:
               command: test
-              packages: $(unitTestsPackage)
+              projects: $(unitTestsPackage)
               configuration: $(buildConfiguration)
               arguments: >
                 --verbosity normal
