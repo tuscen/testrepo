@@ -1,2 +1,2 @@
 **/*
-!src/FooLib/bin/Release/**.nupkg
+!*/**/*.nupkg
