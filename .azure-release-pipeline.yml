@@ -3,6 +3,8 @@ trigger:
   branches:
     include:
       - master
+  pr:
+    - master
   paths:
     exclude:
       - docs/*

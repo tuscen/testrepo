@@ -3,6 +3,8 @@ trigger:
   branches:
     include:
       - develop
+  pr:
+    - develop
   paths:
     exclude:
       - docs/*
