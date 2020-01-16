@@ -3,10 +3,23 @@ parameters:
   sdkVersion: ''
   buildConfiguration: ''
   projects: ''
+  strategies: []
 
 jobs:
-  - job: UnitTest-${{ parameters.vmImage }}
+  - job: UnitTest
     displayName: Run unit tests
+    strategy:
+      matrix:
+        ${{ each strategy in parameters.strategies }}:
+          ${{ each pair in strategy }}:
+            ${{ pair.key }}:
+              VM_IMAGE: ${{ pair.value }}
+        Windows:
+          VM_IMAGE: windows-2019
+        Ubuntu:
+          VM_IMAGE: ubuntu-16.04
+        macOS:
+          VM_IMAGE: macOS-10.13
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:

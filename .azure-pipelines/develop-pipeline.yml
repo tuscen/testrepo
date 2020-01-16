@@ -80,20 +80,10 @@ stages:
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)
           projects: $(unitTestsProject)
-
-      - template: jobs/run-unit-tests.yml
-        parameters:
-          vmImage: windows-2019
-          sdkVersion: $(sdkVersion)
-          buildConfiguration: $(buildConfiguration)
-          projects: $(unitTestsProject)
-
-      - template: jobs/run-unit-tests.yml
-        parameters:
-          vmImage: macos-10.14
-          sdkVersion: $(sdkVersion)
-          buildConfiguration: $(buildConfiguration)
-          projects: $(unitTestsProject)
+          strategies:
+            - Windows: windows-2019
+            - Ubuntu: ubuntu-16.04
+            - macOS: macOS-10.13
 
   - stage: IntegrationTests
     dependsOn: PublishArtifacts

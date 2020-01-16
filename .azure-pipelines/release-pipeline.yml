@@ -95,6 +95,8 @@ stages:
           sdkVersion: $(sdkVersion)
           buildConfiguration: $(buildConfiguration)
           projects: $(unitTestsProject)
+          strategies:
+            - Ubuntu: ubuntu-16.04
 
   - stage: Release
     displayName: 🚀 Release
