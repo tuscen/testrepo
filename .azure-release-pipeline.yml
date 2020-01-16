@@ -175,6 +175,7 @@ stages:
             patterns: "*/**/*.*upkg"
 
           - task: NugetToolInstaller@1
+            versionSpec: 5.4.0
 
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
           - task: NuGetCommand@2
