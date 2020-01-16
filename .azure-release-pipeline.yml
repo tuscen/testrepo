@@ -7,7 +7,6 @@ trigger:
     exclude:
       - docs/*
       - "**/*.md"
-      - .travis.yml
 
 variables:
   buildConfiguration: Release
@@ -16,7 +15,7 @@ variables:
   internalFeedName: testrepo/FooLib
   externalFeedName: NuGet
   ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackage: $(Build.SourcesDirectory)/src/test/FooLibTests/FooLibTests.csproj
+  unitTestsPackage: src/test/FooLibTests/FooLibTests.csproj
 
 stages:
   - stage: Build
