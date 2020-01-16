@@ -5,7 +5,7 @@ parameters:
   projects: ''
 
 jobs:
-  - job: UnitTest
+  - job: UnitTest-${{ parameters.vmImage }}
     displayName: Run unit tests
     pool:
       vmImage: ${{ parameters.vmImage }}
