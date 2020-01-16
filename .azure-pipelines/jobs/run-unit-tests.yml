@@ -1,0 +1,31 @@
+parametes:
+  vmImage: ''
+  sdkVersion: ''
+  buildConfiguration: ''
+  projects: ''
+
+jobs:
+  - job: UnitTest
+    displayName: Run unit tests
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    steps:
+
+      - task: UseDotNet@2
+        displayName: Install .NET Core SDK
+        inputs:
+          version: ${{ parameters.sdkVersion }}
+          packageType: sdk
+
+      - script: dotnet help
+        displayName: Initialize .NET Core environment
+
+      - task: DotNetCoreCLI@2
+        displayName: Execute unit tests
+        inputs:
+          command: test
+          projects: ${{ parameters.projects }}
+          configuration: ${{ parameters.buildConfiguration }}
+          arguments: >
+            --verbosity normal
+          publishTestResults: true
