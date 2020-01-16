@@ -3,12 +3,13 @@ trigger:
   branches:
     include:
       - master
-  pr:
-    - master
   paths:
     exclude:
       - docs/*
       - "**/*.md"
+
+pr:
+  - master
 
 variables:
   buildConfiguration: Release

@@ -5,16 +5,17 @@ trigger:
       - master
       - develop
       - gh-pages
-  pr:
-    branches:
-      exclude:
-        - master
-        - develop
-        - gh-pages
   paths:
     exclude:
       - docs/*
       - "**/*.md"
+
+pr:
+  branches:
+    exclude:
+      - master
+      - develop
+      - gh-pages
 
 variables:
   buildConfiguration: Release
