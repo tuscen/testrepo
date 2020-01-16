@@ -15,7 +15,7 @@ variables:
   internalFeedName: testrepo/FooLib
   externalFeedName: NuGet
   ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackage: src/test/FooLibTests/FooLibTests.csproj
+  unitTestsPackage: test/FooLibTests/FooLibTests.csproj
 
 stages:
   - stage: Build
@@ -34,10 +34,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Build release package
+            displayName: Build project with release version
             inputs:
               command: build
               projects: $(projectPath)
@@ -54,10 +54,10 @@ stages:
               --output "$(Build.ArtifactStagingDirectory)/packages/release"
               --configuration $(buildConfiguration)
               $(projectPath)
-            displayName: Create release package
+            displayName: Create release nuget package
 
           - task: DotNetCoreCLI@2
-            displayName: Build CI package
+            displayName: Build project with CI version
             inputs:
               command: build
               projects: $(projectPath)
@@ -76,7 +76,7 @@ stages:
               --configuration $(buildConfiguration)
               --version-suffix "$(ciVersionSuffix)"
               $(projectPath)
-            displayName: Create CI package
+            displayName: Create CI nuget package
 
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
@@ -88,7 +88,7 @@ stages:
     condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
     jobs:
       - job: PublishArtifacts
-        displayName: Publish Artifacts
+        displayName: Publish artifacts
         pool:
           vmImage: $(vm)
         steps:
@@ -107,10 +107,10 @@ stages:
               packageType: sdk
 
         - script: dotnet help
-          displayName: Initialize .NET Core Environment
+          displayName: Initialize .NET Core environment
 
         - task: DotNetCoreCLI@2
-          displayName: Publish CI Package to Azure Artifacts
+          displayName: Publish CI package to Azure artifacts
             inputs:
               command: push
               nuGetFeedType: internal
@@ -124,7 +124,7 @@ stages:
     condition: succeeded()
     jobs:
       - job: UnitTest
-        displayName: Run Unit Tests
+        displayName: Run unit tests
         pool:
           vmImage: ubuntu-18.04
         steps:
@@ -136,10 +136,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Execute Unit Tests
+            displayName: Execute unit tests
             inputs:
               command: test
               projects: $(unitTestsPackage)
@@ -151,10 +151,11 @@ stages:
   - stage: Release
     displayName: 🚀 Release
     dependsOn: UnitTest
+    # don't push release package on pull requests
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
       - job: Release
-        displayName: Publish Package to NuGet
+        displayName: Publish package to NuGet
         pool:
           # windows image is used because it's the only way to use NugetCommand@2 with
           # support of ignoring publishing of packages with the same version.
@@ -171,7 +172,7 @@ stages:
 
           # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
           - task: NuGetCommand@2
-            displayName: Publish Package to NuGet
+            displayName: Publish package to NuGet
             inputs:
               command: push
               includeNugetOrg: true

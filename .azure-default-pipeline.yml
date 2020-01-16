@@ -17,8 +17,8 @@ variables:
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
   ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackage: src/test/FooLibTests/FooLibTests.csproj
-  integrationTestsPackage: src/test/Integration/FooLibTests.Integration.csproj
+  unitTestsPackage: test/FooLibTests/FooLibTests.csproj
+  integrationTestsPackage: test/Integration/FooLibTests.Integration.csproj
 
 stages:
   - stage: Build
@@ -37,10 +37,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Build Package
+            displayName: Build project with CI version
             inputs:
               command: build
               projects: $(projectPath)
@@ -60,7 +60,7 @@ stages:
               --configuration $(buildConfiguration)
               --version-suffix "$(ciVersionSuffix)"
               $(projectPath)
-            displayName: Pack CI Package
+            displayName: Create CI nuget package
 
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
@@ -72,7 +72,7 @@ stages:
     condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
     jobs:
       - job: PublishArtifacts
-        displayName: Publish Artifacts
+        displayName: Publish artifacts
         pool:
           vmImage: $(vm)
         steps:
@@ -91,10 +91,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Publish CI Package to Azure Artifacts
+            displayName: Publish CI package to Azure artifacts
             inputs:
               command: push
               nuGetFeedType: internal
@@ -108,7 +108,7 @@ stages:
     condition: succeeded()
     jobs:
       - job: UnitTest
-        displayName: Run Unit Tests
+        displayName: Run unit tests
         pool:
           vmImage: $(vm)
         steps:
@@ -120,10 +120,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Execute Unit Tests
+            displayName: Execute unit tests
             inputs:
               command: test
               projects: $(unitTestsPackage)
@@ -135,10 +135,11 @@ stages:
   - stage: IntegrationTests
     dependsOn: PublishArtifacts
     displayName: 🧪 Integreation tests
+    # run integration tests only for pull requests that is coming from the same repo
     condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], False))
     jobs:
       - job: IntegrationTests
-        displayName: Run Integreation tests
+        displayName: Run integreation tests
         pool:
           vmImage: ubuntu-18.04
         steps:
@@ -149,10 +150,10 @@ stages:
               packageType: sdk
 
           - script: dotnet help
-            displayName: Initialize .NET Core Environment
+            displayName: Initialize .NET Core environment
 
           - task: DotNetCoreCLI@2
-            displayName: Execute Unit Tests
+            displayName: Execute integration tests
             inputs:
               command: test
               projects: $(integrationTestsPackage)
@@ -160,5 +161,4 @@ stages:
               arguments: >
                 --verbosity normal
                 --filter "Category!=Interactive"
-
               publishTestResults: true
