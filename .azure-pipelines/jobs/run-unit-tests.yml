@@ -15,7 +15,7 @@ jobs:
             ${{ pair.key }}:
               VM_IMAGE: ${{ pair.value }}
     pool:
-      vmImage: ${{ parameters.vmImage }}
+      vmImage: $(VM_IMAGE)
     steps:
 
       - task: UseDotNet@2
