@@ -188,6 +188,7 @@ stages:
               $(Pipeline.Workspace)/packages/release/*.nupkg
               --api-key $(NugetApiKey)
               --skip-duplicate
+              --source https://nuget.org
             displayName: Publish package to NuGet
 
           - bash: >
