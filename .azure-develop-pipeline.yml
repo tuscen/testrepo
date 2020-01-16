@@ -12,13 +12,7 @@ pr:
   - develop
 
 variables:
-  buildConfiguration: Release
-  sdkVersion: 3.1.100
-  projectPath: src/FooLib/FooLib.csproj
-  internalFeedName: testrepo/FooLib
-  ciVersionSuffix: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackage: test/FooLibTests/FooLibTests.csproj
-  integrationTestsPackage: test/Integration/FooLibTests.Integration.csproj
+  - template: .azure-variables-template.yml
 
 stages:
   - stage: Build
