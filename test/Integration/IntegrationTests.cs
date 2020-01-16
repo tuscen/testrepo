@@ -23,5 +23,12 @@ namespace FooLibTests.Integration
         {
             Assert.False(false);
         }
+
+        [Fact]
+        [Trait("Category", "Interactive")]
+        public void Test4()
+        {
+            Assert.False(false);
+        }
     }
 }
