@@ -11,10 +11,13 @@ namespace FooLib
         ///
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="exclamation"></param>
         /// <returns></returns>
-        public string Greet(string name)
+        public string Greet(string name, bool exclamation = false)
         {
-            return $"Hello, {name}";
+            return exclamation
+                ? $"Hello, {name}!"
+                : $"Hello, {name}";
         }
     }
 }

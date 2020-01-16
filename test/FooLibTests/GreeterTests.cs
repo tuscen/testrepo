@@ -14,14 +14,14 @@ namespace FooLibTests
         }
 
         [Theory]
-        [InlineData("Anon")]
-        [InlineData("tuscen")]
-        [InlineData("foo bar")]
-        public void ShouldReturnGreetString2(string name)
+        [InlineData("Anon", false)]
+        [InlineData("tuscen", true)]
+        [InlineData("foo bar", false)]
+        public void ShouldReturnGreetString2(string name, bool exclamation)
         {
             var greeter = new Greeter();
-            var greetingString = greeter.Greet(name);
-            Assert.Equal($"Hello, {name}", greetingString);
+            var greetingString = greeter.Greet(name, exclamation);
+            Assert.Equal(exclamation ? $"Hello, {name}!" : $"Hello, {name}", greetingString);
         }
     }
 }
