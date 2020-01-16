@@ -109,17 +109,17 @@ stages:
               version: $(sdkVersion)
               packageType: sdk
 
-        - script: dotnet help
-          displayName: Initialize .NET Core environment
+          - script: dotnet help
+            displayName: Initialize .NET Core environment
 
-        - task: DotNetCoreCLI@2
-          displayName: Publish CI package to Azure artifacts
-            inputs:
-              command: push
-              nuGetFeedType: internal
-              feedPublish: $(internalFeedName)
-              publishPackageMetadata: true
-              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
+          - task: DotNetCoreCLI@2
+            displayName: Publish CI package to Azure artifacts
+              inputs:
+                command: push
+                nuGetFeedType: internal
+                feedPublish: $(internalFeedName)
+                publishPackageMetadata: true
+                packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
 
   - stage: UnitTest
     dependsOn: PublishArtifacts
