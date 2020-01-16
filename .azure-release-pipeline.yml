@@ -93,7 +93,7 @@ stages:
       - job: PublishArtifacts
         displayName: Publish artifacts
         pool:
-          vmImage: $(vm)
+          vmImage: ubuntu-18.04
         steps:
 
           - checkout: none
@@ -109,11 +109,11 @@ stages:
               version: $(sdkVersion)
               packageType: sdk
 
-        - script: dotnet help
-          displayName: Initialize .NET Core environment
+          - script: dotnet help
+            displayName: Initialize .NET Core environment
 
-        - task: DotNetCoreCLI@2
-          displayName: Publish CI package to Azure artifacts
+          - task: DotNetCoreCLI@2
+            displayName: Publish CI package to Azure artifacts
             inputs:
               command: push
               nuGetFeedType: internal
