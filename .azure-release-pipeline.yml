@@ -160,10 +160,6 @@ stages:
       - job: Release
         displayName: Publish package to NuGet
         pool:
-          # windows image is used because it's the only way to use NugetCommand@2 with
-          # support of ignoring publishing of packages with the same version.
-          # Since SDK 3.1 dotnet push command has a flag to ignore duplicates but
-          # it isn't supported by DotNetCoreCLI@2 task yet.
           vmImage: ubuntu-18.04
         steps:
 
@@ -198,15 +194,3 @@ stages:
               --skip-duplicate
               --source https://nuget.org
             displayName: Publish symbols to NuGet
-
-          # BUG NugetCommand@2 has a bug that prevents it to ignore package conflicts (nuget client returns error code 1 instead of expected error code 2 on 409 Conflict response). Recommended solution is to use secret variables.
-#          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
-#          - task: NuGetCommand@2
-#            displayName: Publish package to NuGet
-#            inputs:
-#              command: push
-#              includeNugetOrg: true
-#              nuGetFeedType: external
-#              publishFeedCredentials: $(externalFeedName)
-#              packagesToPush: $(Pipeline.Workspace)/packages/release/*.*upkg
-#              allowPackageConflicts: true
