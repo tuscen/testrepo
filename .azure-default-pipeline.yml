@@ -141,7 +141,7 @@ stages:
       - job: IntegrationTests
         displayName: Run integreation tests
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: $(vm)
         steps:
           - task: UseDotNet@2
             displayName: Install .NET Core 3.1 SDK

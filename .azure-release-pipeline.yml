@@ -21,7 +21,7 @@ stages:
       - job: Build
         displayName: Build with .NET Core SDK
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: $(vm)
         steps:
 
           - task: UseDotNet@2
@@ -87,7 +87,7 @@ stages:
       - job: PublishArtifacts
         displayName: Publish artifacts
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: $(vm)
         steps:
 
           - checkout: none
@@ -123,7 +123,7 @@ stages:
       - job: UnitTest
         displayName: Run unit tests
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: $(vm)
         steps:
 
           - task: UseDotNet@2
@@ -154,7 +154,7 @@ stages:
       - job: Release
         displayName: Publish package to NuGet
         pool:
-          vmImage: ubuntu-18.04
+          vmImage: $(vm)
         steps:
 
           - checkout: none
