@@ -164,7 +164,7 @@ stages:
           # support of ignoring publishing of packages with the same version.
           # Since SDK 3.1 dotnet push command has a flag to ignore duplicates but
           # it isn't supported by DotNetCoreCLI@2 task yet.
-          vmImage: windows-2019
+          vmImage: ubuntu-18.04
         steps:
 
           - checkout: none
@@ -174,17 +174,39 @@ stages:
             # don't remove quotes
             patterns: "*/**/*.*upkg"
 
-          - task: NugetToolInstaller@1
+          - task: UseDotNet@2
+            displayName: Install .NET Core 3.1 SDK
             inputs:
-              versionSpec: 5.4.0
+              version: $(sdkVersion)
+              packageType: sdk
 
-          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
-          - task: NuGetCommand@2
-            displayName: Publish package to NuGet
+          - script: dotnet help
+            displayName: Initialize .NET Core environment
+
+          - task: NuGetAuthenticate@0
+            displayName: Authenticate with Nuget.org
             inputs:
-              command: push
-              includeNugetOrg: true
-              nuGetFeedType: external
-              publishFeedCredentials: $(externalFeedName)
-              packagesToPush: $(Pipeline.Workspace)/packages/release/*.*upkg
-              allowPackageConflicts: true
+              nuGetServiceConnections: $(externalFeedName)
+
+          - bash: >
+              dotnet nuget push
+              $(Pipeline.Workspace)/packages/release/*.nupkg
+              --skip-duplicate
+            displayName: Publish package to NuGet
+
+          - bash: >
+              dotnet nuget push
+              $(Pipeline.Workspace)/packages/release/*.snupkg
+              --skip-duplicate
+            displayName: Publish symbols to NuGet
+
+#          # TODO replace with DotNetCoreCLI when push command will support ignoring duplicates
+#          - task: NuGetCommand@2
+#            displayName: Publish package to NuGet
+#            inputs:
+#              command: push
+#              includeNugetOrg: true
+#              nuGetFeedType: external
+#              publishFeedCredentials: $(externalFeedName)
+#              packagesToPush: $(Pipeline.Workspace)/packages/release/*.*upkg
+#              allowPackageConflicts: true
