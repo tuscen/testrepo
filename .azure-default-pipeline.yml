@@ -18,7 +18,7 @@ variables:
   projectPath: src/FooLib/FooLib.csproj
   internalFeedName: testrepo/FooLib
   ciBuildVersion: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  unitTestsPackagePath: $(Build.SourcesDirectory)/src/test/FooLibTests
+  unitTestsPackage: $(Build.SourcesDirectory)/src/test/FooLibTests/FooLibTests.csproj
 
 stages:
   - stage: Build
@@ -126,8 +126,8 @@ stages:
             displayName: Execute Unit Tests
             inputs:
               command: test
+              packages: $(unitTestsPackage)
               configuration: $(buildConfiguration)
               arguments: >
                 --verbosity normal
               publishTestResults: true
-              workingDirectory: $(unitTestsPackagePath)
