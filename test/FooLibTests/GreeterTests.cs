@@ -21,7 +21,7 @@ namespace FooLibTests
         {
             var greeter = new Greeter();
             var greetingString = greeter.Greet(name, exclamation);
-            Assert.Equal(exclamation ? $"Hello, {name}!" : $"Hello, {name}", greetingString);
+            Assert.Equal(exclamation ? $"Hello, there {name}!" : $"Hello, there {name}", greetingString);
         }
     }
 }
