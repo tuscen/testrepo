@@ -29,7 +29,7 @@ namespace FooLibTests
         {
             var test = new Test();
             var testValue = test.GetValue();
-            Assert.Equal("test5", testValue);
+            Assert.Equal("test", testValue);
         }
     }
 }
