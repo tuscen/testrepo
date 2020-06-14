@@ -16,8 +16,8 @@ namespace FooLib
         public string Greet(string name, bool exclamation = false)
         {
             return exclamation
-                ? $"Hello, {name}!"
-                : $"Hello, {name}";
+                ? $"Hello there, {name}!"
+                : $"Hello there, {name}";
         }
     }
 }
