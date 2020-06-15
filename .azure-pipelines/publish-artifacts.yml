@@ -5,7 +5,7 @@ trigger:
       - gh-pages
   paths:
     exclude:
-      - docs/*
+      - docs/
       - "*/**/*.md"
 
 pr: none

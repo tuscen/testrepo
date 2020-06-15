@@ -6,6 +6,7 @@ pr:
       - develop
   paths:
     exclude:
+      - docs/
       - "*/**/*.md"
 
 variables:
