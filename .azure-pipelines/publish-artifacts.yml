@@ -6,7 +6,7 @@ trigger:
   paths:
     exclude:
       - docs/*
-      - "**/*.md"
+      - "*/**/*.md"
 
 pr: none
 

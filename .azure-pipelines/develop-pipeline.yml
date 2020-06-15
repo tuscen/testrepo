@@ -1,7 +1,12 @@
 trigger: none
 
 pr:
-  - develop
+  branches:
+    include:
+      - develop
+  paths:
+    exclude:
+      - "*/**/*.md"
 
 variables:
   - template: variables.yml
