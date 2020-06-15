@@ -8,7 +8,7 @@ namespace FooLib
     public class Greeter
     {
         /// <summary>
-        ///
+        /// Composes greeting string
         /// </summary>
         /// <param name="name"></param>
         /// <param name="exclamation"></param>
