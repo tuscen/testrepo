@@ -7,7 +7,7 @@ pr:
   paths:
     exclude:
       - docs/
-      - "*.md"
+      - README.md
 
 variables:
   - template: variables.yml

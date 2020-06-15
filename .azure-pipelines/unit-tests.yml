@@ -7,7 +7,7 @@ trigger:
   paths:
     exclude:
       - docs/
-      - "*.md"
+      - README.md
 
 pr: none
 
