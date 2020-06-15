@@ -22,5 +22,8 @@ namespace FooLib
 
         internal void Test()
         { }
+
+        internal void Test2()
+        { }
     }
 }
