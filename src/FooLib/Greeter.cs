@@ -19,5 +19,8 @@ namespace FooLib
                 ? $"Hello, {name}!"
                 : $"Hello, {name}";
         }
+
+        internal void Test()
+        { }
     }
 }
