@@ -6,8 +6,8 @@ pr:
       - develop
   paths:
     exclude:
-      - "**/*.md"
-      - docs/*
+      - docs/
+      - README.md
 
 variables:
   - template: variables.yml
