@@ -3,7 +3,7 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <VersionPrefix>0.0.8</VersionPrefix>
+    <VersionPrefix>0.0.9</VersionPrefix>
     <PackageId>Tuscen.FooLib</PackageId>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
