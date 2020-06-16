@@ -10,6 +10,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <RepositoryUrl>https://github.com/tuscen/testrepo.git</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
