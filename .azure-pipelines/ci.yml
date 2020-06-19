@@ -36,7 +36,7 @@ stages:
           - bash: >
               dotnet pack
               --no-build
-              --output "$(Build.ArtifactStagingDirectory)/packages/ci"
+              --output "$(Build.ArtifactStagingDirectory)/packages"
               --configuration $(buildConfiguration)
               -p:VersionPrefix=$(versionPrefix)
               -p:VersionSuffix=$(ciVersionSuffix)
@@ -81,4 +81,4 @@ stages:
               nuGetFeedType: internal
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
-              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
+              packagesToPush: $(Pipeline.Workspace)/packages/*.*upkg

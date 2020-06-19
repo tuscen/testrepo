@@ -34,7 +34,7 @@ stages:
           - bash: >
               dotnet pack
               --no-build
-              --output "$(Build.ArtifactStagingDirectory)/packages/release"
+              --output "$(Build.ArtifactStagingDirectory)/packages"
               --configuration $(buildConfiguration)
               -p:Version=$(versionPrefix)
               $(projectPath)
@@ -59,7 +59,7 @@ stages:
 
           - bash: >
               dotnet nuget push
-              $(Pipeline.Workspace)/packages/release/*.nupkg
+              $(Pipeline.Workspace)/packages/*.nupkg
               --api-key $(NugetApiKey)
               --skip-duplicate
               --source https://api.nuget.org/v3/index.json
