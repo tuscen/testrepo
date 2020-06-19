@@ -3,13 +3,13 @@ variables:
   - name: versionPrefix
     value: 0.0.13
   - name: versionSuffix
-    value: "alpha.1"
-  - {{ if eq(variables.versionSuffix, "") }}:
+    value: alpha.1
+  - ${{ if eq(versionSuffix, "") }}:
     - name: releaseVersion
       value: $(versionPrefix)
     - name: ciVersion
       value: $(versionPrefix)-$(ciVersionSuffix)
-  - {{ if ne(variables.versionSuffix, "") }}:
+  - ${{ if ne(versionSuffix, "") }}:
     - name: releaseVersion
       value: $(versionPrefix)-$(versionSuffix)
     - name: ciVersion
