@@ -29,12 +29,14 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-
+                /p:Version=$(versionPrefix)
+                $(projectPath)
           - bash: >
               dotnet pack
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/release"
               --configuration $(buildConfiguration)
+              /p:Version=$(versionPrefix)
               $(projectPath)
             displayName: Create release nuget package
 
@@ -53,7 +55,7 @@ stages:
 
           - download: current
             artifact: packages
-            patterns: "*/**/*.*upkg"
+            patterns: "*/**/*.*nupkg"
 
           - bash: >
               dotnet nuget push

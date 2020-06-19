@@ -29,14 +29,17 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                --version-suffix "$(ciVersionSuffix)"
+                /p:VersionPrefix=$(versionPrefix)
+                /p:VersionSuffix=$(ciVersionSuffix)
+                /p:CI_EMBED_SYMBOLS=true
 
           - bash: >
               dotnet pack
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
-              --version-suffix "$(ciVersionSuffix)"
+              /p:VersionPrefix=$(versionPrefix)
+              /p:VersionSuffix=$(ciVersionSuffix)
               $(projectPath)
             displayName: Create CI nuget package
 
@@ -68,7 +71,7 @@ stages:
           - download: current
             artifact: packages
             # quotes are needed since * can't be used as the first character without quotes
-            patterns: "*/**/*.*upkg"
+            patterns: "*/**/*.*nupkg"
 
           - task: DotNetCoreCLI@2
             displayName: Publish CI package to Azure artifacts
