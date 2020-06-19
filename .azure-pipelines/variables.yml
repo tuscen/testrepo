@@ -1,5 +1,23 @@
 variables:
   - group: Integration Tests Variables
+  - name: versionPrefix
+    value: 0.0.13
+  - name: versionSuffix
+    value: "alpha.1"
+  - {{ if eq(versionSuffix, "") }}:
+    - name: releaseVersion
+      value: $(versionPrefix)
+  - {{ if ne(versionSuffix, "") }}:
+    - name: releaseVersion
+      value: $(versionPrefix)-$(versionSuffix)
+  - name: ciVersionSuffix
+    value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
+  - {{ if eq(versionSuffix, "") }}:
+    - name: ciVersion
+      value: $(versionPrefix)-$(ciVersionSuffix)
+  - {{ if ne(versionSuffix, "") }}:
+    - name: ciVersion
+      value: $(versionPrefix)-$(versionSuffix).$(ciVersionSuffix)
   - name: buildConfiguration
     value: Release
   - name: vmImage
@@ -8,10 +26,6 @@ variables:
     value: src/FooLib/FooLib.csproj
   - name: internalFeedName
     value: testrepo/FooLib
-  - name: versionPrefix
-    value: 0.0.12
-  - name: ciVersionSuffix
-    value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: unitTestsProject
     value: test/FooLibTests/FooLibTests.csproj
   - name: integrationTestsProject

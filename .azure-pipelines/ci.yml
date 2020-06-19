@@ -22,7 +22,8 @@ stages:
         pool:
           vmImage: $(vmImage)
         steps:
-          - bash: echo $(Build.Repository.ID)
+          - bash: echo $(releaseVersion)
+          - bash: echo $(ciVersion)
           - task: DotNetCoreCLI@2
             displayName: Build project with CI version
             inputs:
@@ -30,24 +31,19 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                -p:VersionPrefix=$(versionPrefix)
-                -p:VersionSuffix=$(ciVersionSuffix)
+                -p:Version=$(ciVersion)
                 -p:CI_EMBED_SYMBOLS=true
-
           - bash: >
               dotnet pack
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages"
               --configuration $(buildConfiguration)
-              -p:VersionPrefix=$(versionPrefix)
-              -p:VersionSuffix=$(ciVersionSuffix)
+              -p:Version=$(ciVersion)
               -p:CI_EMBED_SYMBOLS=true
               $(projectPath)
             displayName: Create CI nuget package
-
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
-
   - stage: UnitTest
     dependsOn: Build
     displayName: 🧪 Unit test
@@ -58,7 +54,6 @@ stages:
           projects: $(unitTestsProject)
           strategies:
             - Ubuntu: ubuntu-18.04
-
   - stage: PublishArtifacts
     dependsOn: Build
     displayName: 📤 Publish artifacts
@@ -69,10 +64,8 @@ stages:
           vmImage: $(vmImage)
         steps:
           - checkout: none
-
           - download: current
             artifact: packages
-
           - task: DotNetCoreCLI@2
             displayName: Publish CI package to Azure artifacts
             inputs:

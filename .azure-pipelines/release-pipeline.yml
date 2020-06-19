@@ -30,7 +30,6 @@ stages:
               arguments: >
                 --configuration $(buildConfiguration)
                 -p:Version=$(versionPrefix)
-
           - bash: >
               dotnet pack
               --no-build
@@ -39,10 +38,8 @@ stages:
               -p:Version=$(versionPrefix)
               $(projectPath)
             displayName: Create release nuget package
-
           - publish: $(Build.ArtifactStagingDirectory)/packages
             artifact: packages
-
   - stage: Release
     displayName: 🚀 Release
     jobs:
@@ -52,10 +49,8 @@ stages:
           vmImage: $(vmImage)
         steps:
           - checkout: none
-
           - download: current
             artifact: packages
-
           - bash: >
               dotnet nuget push
               $(Pipeline.Workspace)/packages/*.nupkg
@@ -63,16 +58,22 @@ stages:
               --skip-duplicate
               --source https://api.nuget.org/v3/index.json
             displayName: Publish package to NuGet
-
+      - job: GithubRelease
+        displyName: Create Github Release
+        pool:
+          vmImage: $(vmImage)
+        steps:
+          - checkout: none
+          - download: current
+            artifact: packages
           - task: GitHubRelease@0
             inputs:
               action: create
               target: $(Build.SourceVersion)
               tagSource: manual
-              tag: v$(versionPrefix)
-              tagPattern: v$(versionPrefix)
-              title: $(versionPrefix)
-              # releaseTitle: $(versionPrefix)
+              tag: v$(releaseVersion)
+              tagPattern: v$(releaseVersion)
+              title: $(releaseVersion)
               githubConnection: githubRelease
               repositoryName: $(Build.Repository.Name)
               addChangeLog: false
