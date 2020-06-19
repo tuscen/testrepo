@@ -67,8 +67,9 @@ stages:
           - task: GitHubRelease@0
             inputs:
               action: create
-              tagSource: auto
+              tagSource: manual
               tag: v$(versionPrefix)
+              tagPattern: v$(versionPrefix)
               releaseTitle: $(versionPrefix)
               githubConnection: githubRelease
               repositoryName: $(Build.Repository.Name)
