@@ -40,6 +40,7 @@ stages:
               --configuration $(buildConfiguration)
               -p:VersionPrefix=$(versionPrefix)
               -p:VersionSuffix=$(ciVersionSuffix)
+              -p:CI_EMBED_SYMBOLS=true
               $(projectPath)
             displayName: Create CI nuget package
 
