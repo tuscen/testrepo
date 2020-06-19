@@ -9,7 +9,7 @@ variables:
   - name: internalFeedName
     value: testrepo/FooLib
   - name: versionPrefix
-    value: 0.0.11
+    value: 0.0.12
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: unitTestsProject
