@@ -22,6 +22,7 @@ stages:
         pool:
           vmImage: $(vmImage)
         steps:
+          - bash: echo $(Build.Repository.ID)
           - task: DotNetCoreCLI@2
             displayName: Build project with CI version
             inputs:
@@ -29,14 +30,18 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                --version-suffix "$(ciVersionSuffix)"
+                -p:VersionPrefix=$(versionPrefix)
+                -p:VersionSuffix=$(ciVersionSuffix)
+                -p:CI_EMBED_SYMBOLS=true
 
           - bash: >
               dotnet pack
               --no-build
-              --output "$(Build.ArtifactStagingDirectory)/packages/ci"
+              --output "$(Build.ArtifactStagingDirectory)/packages"
               --configuration $(buildConfiguration)
-              --version-suffix "$(ciVersionSuffix)"
+              -p:VersionPrefix=$(versionPrefix)
+              -p:VersionSuffix=$(ciVersionSuffix)
+              -p:CI_EMBED_SYMBOLS=true
               $(projectPath)
             displayName: Create CI nuget package
 
@@ -67,8 +72,6 @@ stages:
 
           - download: current
             artifact: packages
-            # quotes are needed since * can't be used as the first character without quotes
-            patterns: "*/**/*.*upkg"
 
           - task: DotNetCoreCLI@2
             displayName: Publish CI package to Azure artifacts
@@ -77,4 +80,4 @@ stages:
               nuGetFeedType: internal
               feedPublish: $(internalFeedName)
               publishPackageMetadata: true
-              packagesToPush: $(Pipeline.Workspace)/packages/ci/*.*upkg
+              packagesToPush: $(Pipeline.Workspace)/packages/*.*upkg

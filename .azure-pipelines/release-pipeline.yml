@@ -29,12 +29,14 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
+                -p:Version=$(versionPrefix)
 
           - bash: >
               dotnet pack
               --no-build
-              --output "$(Build.ArtifactStagingDirectory)/packages/release"
+              --output "$(Build.ArtifactStagingDirectory)/packages"
               --configuration $(buildConfiguration)
+              -p:Version=$(versionPrefix)
               $(projectPath)
             displayName: Create release nuget package
 
@@ -53,12 +55,22 @@ stages:
 
           - download: current
             artifact: packages
-            patterns: "*/**/*.*upkg"
 
           - bash: >
               dotnet nuget push
-              $(Pipeline.Workspace)/packages/release/*.nupkg
+              $(Pipeline.Workspace)/packages/*.nupkg
               --api-key $(NugetApiKey)
               --skip-duplicate
               --source https://api.nuget.org/v3/index.json
             displayName: Publish package to NuGet
+
+          - task: GitHubRelease@0
+            inputs:
+              action: create
+              tagSource: auto
+              tag: v$(versionPrefix)
+              releaseTitle: $(versionPrefix)
+              githubConnection: tuscen
+              repositoryName: $(Build.Repository.Name)
+              assets: $(Pipeline.Workspace)/packages/*
+            displayName: Create Github Release

@@ -8,6 +8,8 @@ variables:
     value: src/FooLib/FooLib.csproj
   - name: internalFeedName
     value: testrepo/FooLib
+  - name: versionPrefix
+    value: 0.0.11
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: unitTestsProject
