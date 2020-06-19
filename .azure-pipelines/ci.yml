@@ -22,7 +22,7 @@ stages:
         pool:
           vmImage: $(vmImage)
         steps:
-          - bash: echo $(Build.Repository.Name)
+          - bash: echo $(Build.Repository.ID)
           - task: DotNetCoreCLI@2
             displayName: Build project with CI version
             inputs:
