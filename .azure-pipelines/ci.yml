@@ -32,6 +32,7 @@ stages:
                 /p:VersionPrefix=$(versionPrefix)
                 /p:VersionSuffix=$(ciVersionSuffix)
                 /p:CI_EMBED_SYMBOLS=true
+                $(projectPath)
 
           - bash: >
               dotnet pack
