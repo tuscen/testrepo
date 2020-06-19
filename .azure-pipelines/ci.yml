@@ -29,18 +29,17 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                /p:VersionPrefix=$(versionPrefix)
-                /p:VersionSuffix=$(ciVersionSuffix)
-                /p:CI_EMBED_SYMBOLS=true
-                $(projectPath)
+                -p:VersionPrefix=$(versionPrefix)
+                -p:VersionSuffix=$(ciVersionSuffix)
+                -p:CI_EMBED_SYMBOLS=true
 
           - bash: >
               dotnet pack
               --no-build
               --output "$(Build.ArtifactStagingDirectory)/packages/ci"
               --configuration $(buildConfiguration)
-              /p:VersionPrefix=$(versionPrefix)
-              /p:VersionSuffix=$(ciVersionSuffix)
+              -p:VersionPrefix=$(versionPrefix)
+              -p:VersionSuffix=$(ciVersionSuffix)
               $(projectPath)
             displayName: Create CI nuget package
 
