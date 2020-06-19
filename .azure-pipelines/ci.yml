@@ -72,8 +72,6 @@ stages:
 
           - download: current
             artifact: packages
-            # quotes are needed since * can't be used as the first character without quotes
-            patterns: "*/**/*.*upkg"
 
           - task: DotNetCoreCLI@2
             displayName: Publish CI package to Azure artifacts
