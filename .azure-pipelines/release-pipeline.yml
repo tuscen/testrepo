@@ -55,7 +55,7 @@ stages:
 
           - download: current
             artifact: packages
-            patterns: "*/**/*.*nupkg"
+            patterns: "*/**/*.*upkg"
 
           - bash: >
               dotnet nuget push
