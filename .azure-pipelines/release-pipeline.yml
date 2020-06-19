@@ -29,8 +29,8 @@ stages:
               projects: $(projectPath)
               arguments: >
                 --configuration $(buildConfiguration)
-                /p:Version=$(versionPrefix)
-                $(projectPath)
+                -p:Version=$(versionPrefix)
+
           - bash: >
               dotnet pack
               --no-build
