@@ -67,11 +67,14 @@ stages:
           - task: GitHubRelease@0
             inputs:
               action: create
+              target: $(Build.SourceVersion)
               tagSource: manual
               tag: v$(versionPrefix)
               tagPattern: v$(versionPrefix)
-              releaseTitle: $(versionPrefix)
+              title: $(versionPrefix)
+              # releaseTitle: $(versionPrefix)
               githubConnection: githubRelease
               repositoryName: $(Build.Repository.Name)
+              addChangeLog: false
               assets: $(Pipeline.Workspace)/packages/*
             displayName: Create Github Release
