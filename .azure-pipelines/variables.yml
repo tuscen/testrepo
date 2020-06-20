@@ -1,5 +1,11 @@
 variables:
   - group: Integration Tests Variables
+  - name: versionPrefix
+    value: 0.0.13
+  - name: versionSuffix
+    value: alpha.1
+  - name: ciVersionSuffix
+    value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: buildConfiguration
     value: Release
   - name: vmImage
@@ -8,10 +14,6 @@ variables:
     value: src/FooLib/FooLib.csproj
   - name: internalFeedName
     value: testrepo/FooLib
-  - name: versionPrefix
-    value: 0.0.12
-  - name: ciVersionSuffix
-    value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: unitTestsProject
     value: test/FooLibTests/FooLibTests.csproj
   - name: integrationTestsProject
