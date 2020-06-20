@@ -65,7 +65,7 @@ stages:
         --source https://api.nuget.org/v3/index.json
       displayName: Publish package to Nuget
   - job: GithubRelease
-    displyName: Create Github Release
+    displayName: Create Github Release
     pool:
       vmImage: $(vmImage)
     steps:
