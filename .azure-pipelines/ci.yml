@@ -22,14 +22,14 @@ stages:
     pool:
       vmImage: $(vmImage)
     steps:
-    - bash: echo $(releaseVersion)
-    - bash: echo $(ciVersion)
     - script: node .azure-pipelines/setVersionVariables.js
       env:
         VERSION_PREFIX: $(versionPrefix)
         VERSION_SUFFIX: $(versionSuffix)
         CI_VERSION_SUFFIX: $(ciVersionSuffix)
       displayName: Set version variables
+    - bash: echo $(RELEASE_VERSION)
+    - bash: echo $(CI_VERSION)
     - task: DotNetCoreCLI@2
       displayName: Build project with CI version
       inputs:

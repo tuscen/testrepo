@@ -20,7 +20,7 @@ const releaseVersionCommand = createCommand(
 );
 
 const ciVersionCommand = createCommand(
-    'CI_RELEASE_VERSION',
+    'CI_VERSION',
     suffix && suffix.length > 0
     ? `${prefix}-${suffix}.${ciSuffix}`
     : `${prefix}-${ciSuffix}`
