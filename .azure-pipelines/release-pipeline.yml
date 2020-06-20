@@ -57,5 +57,5 @@ steps:
     githubConnection: githubRelease
     repositoryName: $(Build.Repository.Name)
     addChangeLog: false
-    assets: $(Pipeline.Workspace)/packages/*
+    assets: $(Build.ArtifactStagingDirectory)/packages/*
   displayName: Create Github Release
