@@ -41,7 +41,7 @@ steps:
   displayName: Create release nuget package
 - bash: >
     dotnet nuget push
-    $(Pipeline.Workspace)/packages/*.nupkg
+    $(Build.ArtifactStagingDirectory)/packages/*.nupkg
     --api-key $(NugetApiKey)
     --skip-duplicate
     --source https://api.nuget.org/v3/index.json
