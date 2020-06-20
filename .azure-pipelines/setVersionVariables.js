@@ -7,14 +7,8 @@ const ciSuffix = process.env['CI_VERSION_SUFFIX'];
 const prefixRegex = /[0-9]+.[0-9]+.[0-9]+/;
 const ciSuffixRegex = /ci.[0-9]+\+git\.commit\.[0-9a-z]{40}/;
 
-assert.notStrictEqual(prefix, null);
-assert.notStrictEqual(prefix, undefined);
-assert.notStrictEqual(prefix, "");
-
-assert.notStrictEqual(ciSuffix, null);
-assert.notStrictEqual(ciSuffix, undefined);
-assert.notStrictEqual(ciSuffix, "");
-
+assert.ok(prefix, "Version prefix is empty");
+assert.ok(ciSuffix, "CI version suffix is empty");
 assert.ok(prefixRegex.test(prefix), "Version prefix is invalid");
 assert.ok(ciSuffixRegex.test(ciSuffix), "CI version prefix is invalid");
 
