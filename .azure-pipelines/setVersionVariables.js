@@ -15,8 +15,8 @@ assert.notStrictEqual(ciSuffix, null);
 assert.notStrictEqual(ciSuffix, undefined);
 assert.notStrictEqual(ciSuffix, "");
 
-assert.ok(prefixRegex.true(prefix), "Version prefix is invalid");
-assert.ok(ciSuffixRegex.true(ciSuffix), "CI version prefix is invalid");
+assert.ok(prefixRegex.test(prefix), "Version prefix is invalid");
+assert.ok(ciSuffixRegex.test(ciSuffix), "CI version prefix is invalid");
 
 const releaseVersionCommand = createCommand(
     'RELEASE_VERSION',
