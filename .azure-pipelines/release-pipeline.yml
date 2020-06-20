@@ -10,6 +10,9 @@ trigger:
 
 pr: none
 
+variables:
+- template: variables.yml
+
 pool:
   vmImage: $(vmImage)
 
