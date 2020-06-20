@@ -82,7 +82,7 @@ stages:
         action: create
         target: $(Build.SourceVersion)
         tagSource: manual
-        tag: v$(releaseVersion)
+        tag: v$(RELEASE_VERSION)
         tagPattern: v$(RELEASE_VERSION)
         title: $(RELEASE_VERSION)
         githubConnection: githubRelease
