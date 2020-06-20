@@ -69,7 +69,6 @@ stages:
     pool:
       vmImage: $(vmImage)
     steps:
-    - checkout: none
     - download: current
       artifact: packages
     - script: node .azure-pipelines/setVersionVariables.js
