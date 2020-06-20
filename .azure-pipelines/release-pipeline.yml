@@ -64,30 +64,30 @@ stages:
         --skip-duplicate
         --source https://api.nuget.org/v3/index.json
       displayName: Publish package to Nuget
-    - job: GithubRelease
-      displyName: Create Github Release
-      pool:
-        vmImage: $(vmImage)
-      steps:
-      - checkout: none
-      - download: current
-        artifact: packages
-      - script: node .azure-pipelines/setVersionVariables.js
-        env:
-          VERSION_PREFIX: $(versionPrefix)
-          VERSION_SUFFIX: $(versionSuffix)
-          CI_VERSION_SUFFIX: $(ciVersionSuffix)
-        displayName: Set version variables
-      - task: GitHubRelease@0
-        inputs:
-          action: create
-          target: $(Build.SourceVersion)
-          tagSource: manual
-          tag: v$(releaseVersion)
-          tagPattern: v$(RELEASE_VERSION)
-          title: $(RELEASE_VERSION)
-          githubConnection: githubRelease
-          repositoryName: $(Build.Repository.Name)
-          addChangeLog: false
-          assets: $(Pipeline.Workspace)/packages/*
-        displayName: Create Github Release
+  - job: GithubRelease
+    displyName: Create Github Release
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - checkout: none
+    - download: current
+      artifact: packages
+    - script: node .azure-pipelines/setVersionVariables.js
+      env:
+        VERSION_PREFIX: $(versionPrefix)
+        VERSION_SUFFIX: $(versionSuffix)
+        CI_VERSION_SUFFIX: $(ciVersionSuffix)
+      displayName: Set version variables
+    - task: GitHubRelease@0
+      inputs:
+        action: create
+        target: $(Build.SourceVersion)
+        tagSource: manual
+        tag: v$(releaseVersion)
+        tagPattern: v$(RELEASE_VERSION)
+        title: $(RELEASE_VERSION)
+        githubConnection: githubRelease
+        repositoryName: $(Build.Repository.Name)
+        addChangeLog: false
+        assets: $(Pipeline.Workspace)/packages/*
+      displayName: Create Github Release
