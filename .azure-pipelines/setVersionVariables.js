@@ -1,8 +1,8 @@
 const assert = require('assert').strict;
 
-const prefix = process.env.VERSION_PREFIX;
-const suffix = process.env.VERSION_SUFFIX;
-const ciSuffix = process.env.CI_VERSION_SUFFIX;
+const prefix = process.env['VERSION_PREFIX'];
+const suffix = process.env['VERSION_SUFFIX'];
+const ciSuffix = process.env['CI_VERSION_SUFFIX'];
 
 assert.notStrictEqual(prefix, null);
 assert.notStrictEqual(prefix, undefined);
