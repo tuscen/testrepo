@@ -4,6 +4,9 @@ const prefix = process.env['VERSION_PREFIX'];
 const suffix = process.env['VERSION_SUFFIX'];
 const ciSuffix = process.env['CI_VERSION_SUFFIX'];
 
+const prefixRegex = /[0-9]+.[0-9]+.[0-9]+/;
+const ciSuffixRegex = /ci.[0-9]+\+git\.commit\.[0-9a-z]{40}/;
+
 assert.notStrictEqual(prefix, null);
 assert.notStrictEqual(prefix, undefined);
 assert.notStrictEqual(prefix, "");
@@ -11,6 +14,9 @@ assert.notStrictEqual(prefix, "");
 assert.notStrictEqual(ciSuffix, null);
 assert.notStrictEqual(ciSuffix, undefined);
 assert.notStrictEqual(ciSuffix, "");
+
+assert.ok(prefixRegex.true(prefix), "Version prefix is invalid");
+assert.ok(ciSuffixRegex.true(ciSuffix), "CI version prefix is invalid");
 
 const releaseVersionCommand = createCommand(
     'RELEASE_VERSION',
