@@ -3,9 +3,18 @@ variables:
   - name: versionPrefix
     value: 0.0.16
   - name: versionSuffix
-    value: "alpha.1"
+    value: 'alpha.1'
+  - name: releaseVersion
+    value: $[variables.versionPrefix]-$[variables.versionSuffix]
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
+  - name: ciVersion
+      ${{ if eq(versionSuffix, '' }}:
+        value: $[variables.versionPrefix]-$[ciVersionSuffix]
+      ${{ if ne(versionSuffix, '' }}:
+        value: $[variables.versionPrefix]-$[variables.versionSuffix].$[ciVersionSuffix]
+  - name: isPrereleaseVersion
+    value: $[ne(variables.versionSuffix, "")]
   - name: buildConfiguration
     value: Release
   - name: vmImage
