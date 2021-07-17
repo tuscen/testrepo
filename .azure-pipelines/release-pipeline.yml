@@ -56,7 +56,7 @@ steps:
     title: $(RELEASE_VERSION)
     githubConnection: githubRelease
     repositoryName: $(Build.Repository.Name)
-    isPreRelease: $(IS_PRE_RELEASE)
+    isPreRelease: $(isPrerelease)
     addChangeLog: false
     assets: $(Build.ArtifactStagingDirectory)/packages/*
   displayName: Create Github Release
