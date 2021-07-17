@@ -26,14 +26,8 @@ const ciVersionCommand = createCommand(
     : `${prefix}-${ciSuffix}`
 );
 
-const isPreRelease = createCommand(
-    'IS_PRE_RELEASE',
-    suffix && suffix.length > 0 ? true : false
-);
-
 console.log(releaseVersionCommand);
 console.log(ciVersionCommand);
-console.log(isPreRelease);
 
 function createCommand(key, value) {
     return `##vso[task.setvariable variable=${key};]${value}`
