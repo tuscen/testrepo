@@ -7,7 +7,7 @@ variables:
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
   - name: isPrereleaseVersion
-    value: $[ne(variables.versionSuffix, "")]
+    value: $[ne(variables.versionSuffix, '')]
   - name: buildConfiguration
     value: Release
   - name: vmImage
