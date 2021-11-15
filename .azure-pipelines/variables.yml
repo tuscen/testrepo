@@ -1,15 +1,27 @@
 variables:
   - group: Integration Tests Variables
   - name: versionPrefix
-    value: 0.0.16
+    value: 0.0.18
   - name: versionSuffix
-    value: "alpha.1"
+    value: ''
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
+  - name: isPreRelease
+    value: ${{ ne(variables.versionSuffix, '') }}
+  - name: releaseVersion
+    ${{ if eq(variables.isPreRelease, true) }}:
+      value: $(versionPrefix)-$(versionSuffix)
+    ${{ else }}:
+      value: $(versionPrefix)
+  - name: ciVersion
+    ${{ if eq(variables.isPreRelease, true) }}:
+      value: $(versionPrefix)-$(versionSuffix).$(ciVersionSuffix)
+    ${{ else }}:
+      value: $(versionPrefix)-$(ciVersionSuffix)
   - name: buildConfiguration
     value: Release
   - name: vmImage
-    value: ubuntu-18.04
+    value: ubuntu-20.04
   - name: projectPath
     value: src/FooLib/FooLib.csproj
   - name: internalFeedName

@@ -13,9 +13,9 @@ stages:
       buildConfiguration: $(buildConfiguration)
       projects: $(unitTestsProject)
       strategies:
-      - Ubuntu: ubuntu-18.04
-      - macOS: macos-10.15
-      - Windows: windows-2019
+      - Ubuntu: ubuntu-20.04
+      - macOS: macos-11
+      - Windows: windows-2022
 - stage: FullIntegrationTests
   displayName: 🧪 Full set of integration tests
   dependsOn: UnitTest
