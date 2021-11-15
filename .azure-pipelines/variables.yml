@@ -6,12 +6,19 @@ variables:
     value: 'alpha.1'
   - name: ciVersionSuffix
     value: ci.$(Build.BuildId)+git.commit.$(Build.SourceVersion)
-  - name: isPrereleaseVersion
-    value: $[ne(variables.versionSuffix, '')]
+  - name: isPreRelease
+    value: ${{ ne(variables.versionSuffix, '')) }}
+  - name: releaseVersion
+    ${{ if (isPreRelease) }}:
+      value: $(versionPrefix)-$(versionSuffix)
+    ${{ else }}:
+      value: $(versionPrefix)
+  - name: ciVersion
+    value: $(releaseVersion).$(ciVersionSuffix)
   - name: buildConfiguration
     value: Release
   - name: vmImage
-    value: ubuntu-18.04
+    value: ubuntu-20.04
   - name: projectPath
     value: src/FooLib/FooLib.csproj
   - name: internalFeedName
