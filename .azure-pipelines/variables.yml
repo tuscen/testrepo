@@ -9,7 +9,7 @@ variables:
   - name: isPreRelease
     value: ${{ ne(variables.versionSuffix, '') }}
   - name: releaseVersion
-    ${{ if (isPreRelease) }}:
+    ${{ if (eq(variables.isPreRelease, true)) }}:
       value: $(versionPrefix)-$(versionSuffix)
     ${{ else }}:
       value: $(versionPrefix)
