@@ -1,0 +1,20 @@
+name: ci
+
+on: push
+
+env:
+  USE_CI_FEED: false
+  VERSION: 1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IS_PRERELEASE: ${{ contains(env.VERSION, '-') }}
+      PROJECT_PATH: src/Telegram.Bot/Telegram.Bot.csproj
+      CONFIGURATION: Release
+    steps:
+      - run: echo $VERSION
+      - run: echo ${{ env.VERSION }}
+      - run: echo $IS_PRERELEASE
+      - run: echo ${{ env.IS_PRERELEASE }}
